@@ -13,7 +13,6 @@ class Peliculas{
   }
 }
 
-
 class Pelicula {
   double popularity;
   int voteCount;
@@ -62,5 +61,10 @@ class Pelicula {
     voteAverage = json['vote_average'] / 1;
     overview = json['overview'];
     releaseDate = json['release_date'];
+  }
+
+  getPosterImg() {
+    if(posterPath == null) return 'https://www.somatechnology.com/App_Themes/SomaNew_Responsive/Images/no-image-available.png';
+    return 'https://image.tmdb.org/t/p/w500/$posterPath';
   }
 }
