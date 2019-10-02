@@ -67,4 +67,11 @@ class Pelicula {
     if(posterPath == null) return 'https://www.somatechnology.com/App_Themes/SomaNew_Responsive/Images/no-image-available.png';
     return 'https://image.tmdb.org/t/p/w500/$posterPath';
   }
+
+  getBackgroundImage() {
+    if(posterPath == null) return 'https://www.somatechnology.com/App_Themes/SomaNew_Responsive/Images/no-image-available.png';
+    print(id);
+    print('https://image.tmdb.org/t/p/w500$backdropPath');
+    return 'https://image.tmdb.org/t/p/w500$backdropPath';
+  }
 }
