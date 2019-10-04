@@ -35,13 +35,13 @@ class Actor {
   });
 
   Actor.fromJsonMap(Map<String, dynamic> json) {
-    castId = json['cast_id'] / 1;
+    castId = json['cast_id'];
     character = json['character'];
     creditId = json['credit_id'];
     gender = json['gender'];
-    id = json['id'] / 1;
+    id = json['id'];
     name = json['name'];
-    order = json['order'] / 1;
+    order = json['order'];
     profilePath = json['profile_path'];
   }
 

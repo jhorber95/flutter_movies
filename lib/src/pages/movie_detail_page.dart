@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movies_app/src/models/actor_model.dart';
 import 'package:movies_app/src/models/pelicula_model.dart';
+import 'package:movies_app/src/providers/pelicula_provider.dart';
 
 class MovieDetailPage extends StatelessWidget {
   @override
@@ -17,7 +19,7 @@ class MovieDetailPage extends StatelessWidget {
             ),
             _posterTitulo(context, pelicula),
             _description(pelicula),
-            _casting(pelicula.id),
+            _createCasting(pelicula.id),
 
           ]),
         )
@@ -52,11 +54,14 @@ class MovieDetailPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image(
-              image: NetworkImage(pelicula.getPosterImg()),
-              height: 150.0,
+          Hero(
+            tag: pelicula.id,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image(
+                image: NetworkImage(pelicula.getPosterImg()),
+                height: 150.0,
+              ),
             ),
           ),
           SizedBox(
@@ -100,9 +105,57 @@ class MovieDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _casting(int id) {
-    return FutureBuilder(
+  Widget _createCasting(int id) {
+    final movieProvider = new PeliculaProvider();
 
+    return FutureBuilder(
+      future: movieProvider.getCast(id),
+      builder: ( context, AsyncSnapshot<List> snapshot){
+        if(snapshot.hasData) {
+          return _createActorPageView(snapshot.data);
+        }else{
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+
+    );
+  }
+
+  Widget _createActorPageView(List<Actor> data) {
+    return SizedBox(
+      height: 250,
+      child: PageView.builder(
+        pageSnapping: false,
+        controller: PageController(
+          viewportFraction: 0.3,
+          initialPage: 1
+        ),
+          itemCount: data.length,
+          itemBuilder: (context, i) => _gridActor(data[i])
+      ),
+
+    );
+  }
+
+  Widget _gridActor(Actor actor) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: FadeInImage(
+              image: NetworkImage(actor.getProfilePath()),
+              placeholder: NetworkImage('https://comm.wayne.edu/_resources/images/no-photo-available.gif'),
+              height: 150,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Text(actor.name,
+          overflow: TextOverflow.ellipsis,)
+        ],
+      ),
     );
   }
 }
