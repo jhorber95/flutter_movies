@@ -15,20 +15,25 @@ class PeliculaProvider {
 
   List<Pelicula> _populars = new List();
 
-  final _popularStreamController  = StreamController<List<Pelicula>>.broadcast();
+  final _popularStreamController = StreamController<List<Pelicula>>.broadcast();
 
-  Function(List<Pelicula>) get popularsSink => _popularStreamController.sink.add;
+  Function(List<Pelicula>) get popularsSink =>
+      _popularStreamController.sink.add;
 
   Stream<List<Pelicula>> get popularsStream => _popularStreamController.stream;
-
 
   void dispose() {
     _popularStreamController?.close();
   }
 
   Future<List<Pelicula>> _makeMoviesResponse(Uri url) async {
-    final response = await http.get(url);
-    final decodedData = json.decode(response.body);
+    var data;
+    await http.get(url).then((response){
+      data = response;
+    }).catchError((error){
+      print(error.toString());
+    });
+    final decodedData = json.decode(data.body);
 
     final peliculas = new Peliculas.fromJsonList(decodedData['results']);
 
@@ -43,9 +48,9 @@ class PeliculaProvider {
   }
 
   Future<List<Pelicula>> getPopular() async {
-    if(_loading) return [];
+    if (_loading) return [];
 
-    _loading  = true;
+    _loading = true;
     _pagePopular++;
 
     final url = Uri.https(_url, '3/movie/popular', {
@@ -63,7 +68,7 @@ class PeliculaProvider {
   }
 
   Future<List<Actor>> getCast(int movieId) async {
-    final url = Uri.https(_url, '3/movie/$movieId/credits',{
+    final url = Uri.https(_url, '3/movie/$movieId/credits', {
       'api_key': _apiKey,
       'language': _lang,
     });
@@ -73,5 +78,13 @@ class PeliculaProvider {
     final cast = new Cast.fromJsonList(decodedData['cast']);
 
     return cast.actorList;
+  }
+
+  Future<List<Pelicula>> searchMovies(String movie) async {
+    final url = Uri.https(_url, '3/search/movie',
+        {'api_key': _apiKey, 'language': _lang, 'query': movie});
+    
+
+    return await _makeMoviesResponse(url);
   }
 }

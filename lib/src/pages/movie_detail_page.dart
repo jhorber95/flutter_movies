@@ -153,7 +153,8 @@ class MovieDetailPage extends StatelessWidget {
             ),
           ),
           Text(actor.name,
-          overflow: TextOverflow.ellipsis,)
+          overflow: TextOverflow.ellipsis,),
+          Text('(${actor.character})', overflow: TextOverflow.ellipsis,)
         ],
       ),
     );
